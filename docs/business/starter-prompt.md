@@ -63,7 +63,16 @@ The project already includes several shadcn/ui components (button, dialog, avata
 
 ## What I Want to Build
 
-Basic todo list app with the ability for users to add, remove, update, complete and view todos.
+Our app is called Brand Finder, an AI powered assistant, which should receive as input list of URLs of traders of electronics and, for each trader, list out all the brands that they manage. Brands will appear on multiple traders, so we also need a group functionality that will show each brand, and the number of traders that manages each brand.
+Examples of traders are
+- https://boolchand.com/
+- https://www.electronicsmexico.com/
+- https://atacadoconnect.com/
+- https://www.b2bmayoristas.com/
+
+We need an AI that goes into each website and browses automatically to get a list of all the brands in that website
+
+Key thing here is that we need an AI that has the capacity to go into a given URL and research it´s content, with the specific aim of getting a list of brand names mentioned.
 
 ## Request
 

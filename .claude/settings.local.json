@@ -10,7 +10,18 @@
       "mcp__playwright__browser_take_screenshot",
       "mcp__playwright__browser_close",
       "Bash(git add:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(docker --version:*)",
+      "Bash(pnpm run db:migrate:*)",
+      "Bash(pnpm run db:studio:*)",
+      "Bash(pnpm run lint)",
+      "Bash(pnpm run typecheck:*)",
+      "Bash(pnpm run db:generate:*)",
+      "Bash(where npx:*)",
+      "Bash(pnpm dlx:*)",
+      "Bash(del \"c:\\Users\\julia\\Python_Juli\\Brand Finder\\src\\app\\dashboard\\page.tsx\")",
+      "Bash(del \"c:\\Users\\julia\\Python_Juli\\Brand Finder\\src\\app\\chat\\page.tsx\")",
+      "Bash(del \"c:\\Users\\julia\\Python_Juli\\Brand Finder\\src\\app\\profile\\page.tsx\")"
     ],
     "additionalDirectories": [
       "C:\\c\\Projects\\nextjs-better-auth-postgresql-starter-kit"

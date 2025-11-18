@@ -1,5 +1,47 @@
-import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, integer } from "drizzle-orm/pg-core";
 
+// Brand Finder Tables
+export const trader = pgTable("trader", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull(),
+  url: text("url").notNull().unique(),
+  status: text("status").notNull().default("pending"), // pending, processing, completed, failed
+  lastScannedAt: timestamp("last_scanned_at"),
+  errorMessage: text("error_message"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+});
+
+export const brand = pgTable("brand", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull().unique(),
+  normalizedName: text("normalized_name").notNull(), // lowercase for matching
+  traderCount: integer("trader_count").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
+
+export const traderBrand = pgTable("trader_brand", {
+  id: text("id").primaryKey().$defaultFn(() => crypto.randomUUID()),
+  traderId: text("trader_id")
+    .notNull()
+    .references(() => trader.id, { onDelete: "cascade" }),
+  brandId: text("brand_id")
+    .notNull()
+    .references(() => brand.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Better Auth Tables
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),

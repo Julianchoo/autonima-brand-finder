@@ -1,268 +1,290 @@
-# Agentic Coding Boilerplate
+# Brand Finder
 
-A complete agentic coding boilerplate with authentication, PostgreSQL database, AI chat functionality, and modern UI components - perfect for building AI-powered applications and autonomous agents.
+An AI-powered application that automatically scans electronics trader websites to extract and catalog brand names. Built with Next.js 15, TypeScript, and OpenRouter AI.
 
 ## 🚀 Features
 
 - **🔐 Authentication**: Better Auth with Google OAuth integration
 - **🗃️ Database**: Drizzle ORM with PostgreSQL
-- **🤖 AI Integration**: Vercel AI SDK with OpenRouter (access to 100+ AI models)
-- **🎨 UI Components**: shadcn/ui with Tailwind CSS
+- **🤖 AI-Powered Scanning**: Automatic brand extraction using OpenAI
+- **📊 Brand Catalog**: Track brands across multiple traders
+- **🎨 Modern UI**: shadcn/ui components with Tailwind CSS
 - **⚡ Modern Stack**: Next.js 15, React 19, TypeScript
-- **📱 Responsive**: Mobile-first design approach
 
-## 🎥 Video Tutorial
+## 🎯 What Does It Do?
 
-Watch the complete walkthrough of this agentic coding template:
+Brand Finder helps you build a comprehensive database of electronics brands across multiple trader websites:
 
-[![Agentic Coding Boilerplate Tutorial](https://img.youtube.com/vi/T0zFZsr_d0Q/maxresdefault.jpg)](https://youtu.be/T0zFZsr_d0Q)
+1. **Add Traders** - Input URLs of electronics trader websites
+2. **AI Scanning** - Automatically extract brand names using AI
+3. **View Catalog** - See all brands and which traders carry them
+4. **Track Relationships** - Discover which brands appear on multiple traders
 
-<a href="https://youtu.be/T0zFZsr_d0Q" target="_blank" rel="noopener noreferrer">🔗 Watch on YouTube</a>
+### Example Use Cases
 
-## ☕ Support This Project
-
-If this boilerplate helped you build something awesome, consider buying me a coffee!
-
-[![Buy me a coffee](https://img.shields.io/badge/Buy_Me_A_Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://www.buymeacoffee.com/leonvanzyl)
+- Market research for electronics brands
+- Competitor analysis
+- Brand availability tracking
+- Distributor database building
 
 ## 📋 Prerequisites
 
-Before you begin, ensure you have the following installed on your machine:
-
-- **Node.js**: Version 18.0 or higher (<a href="https://nodejs.org/" target="_blank">Download here</a>)
-- **Git**: For cloning the repository (<a href="https://git-scm.com/" target="_blank">Download here</a>)
-- **PostgreSQL**: Either locally installed or access to a hosted service like Vercel Postgres
+- **Node.js**: Version 18.0 or higher
+- **PostgreSQL**: Database (local or hosted like Neon, Vercel Postgres)
+- **OpenAI API Key**: For AI brand extraction
 
 ## 🛠️ Quick Setup
 
-### Automated Setup (Recommended)
-
-Get started with a single command:
+### 1. Clone or Create
 
 ```bash
-npx create-agentic-app@latest my-app
-cd my-app
+npx create-agentic-app@latest brand-finder
+cd brand-finder
 ```
 
-Or create in the current directory:
+Or clone this repository:
 
 ```bash
-npx create-agentic-app@latest .
+git clone <repository-url>
+cd brand-finder
 ```
 
-The CLI will:
-- Copy all boilerplate files
-- Install dependencies with your preferred package manager (pnpm/npm/yarn)
-- Set up your environment file
-
-**Next steps after running the command:**
-
-1. Update `.env` with your API keys and database credentials
-2. Start the database: `docker compose up -d`
-3. Run migrations: `npm run db:migrate`
-4. Start dev server: `npm run dev`
-
-### Manual Setup (Alternative)
-
-If you prefer to set up manually:
-
-**1. Clone or Download the Repository**
-
-**Option A: Clone with Git**
+### 2. Install Dependencies
 
 ```bash
-git clone https://github.com/leonvanzyl/agentic-coding-starter-kit.git
-cd agentic-coding-starter-kit
+pnpm install
+# or npm install
 ```
 
-**Option B: Download ZIP**
-Download the repository as a ZIP file and extract it to your desired location.
+### 3. Environment Setup
 
-**2. Install Dependencies**
-
-```bash
-npm install
-```
-
-**3. Environment Setup**
-
-Copy the example environment file:
-
-```bash
-cp env.example .env
-```
-
-Fill in your environment variables in the `.env` file:
+Copy `.env.example` to `.env` and configure:
 
 ```env
-# Database
-POSTGRES_URL="postgresql://username:password@localhost:5432/your_database_name"
+# Database (Required)
+POSTGRES_URL="postgresql://username:password@host:5432/database"
 
-# Authentication - Better Auth
-BETTER_AUTH_SECRET="your-random-32-character-secret-key-here"
-
-# Google OAuth (Get from Google Cloud Console)
+# Authentication (Required)
+BETTER_AUTH_SECRET="your-random-32-character-secret"
 GOOGLE_CLIENT_ID="your-google-client-id"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"
 
-# AI Integration via OpenRouter (Optional - for chat functionality)
-# Get your API key from: https://openrouter.ai/settings/keys
-# View available models at: https://openrouter.ai/models
-OPENROUTER_API_KEY="sk-or-v1-your-openrouter-api-key-here"
-OPENROUTER_MODEL="openai/gpt-5-mini"
+# AI (Required for scanning)
+OPENAI_API_KEY="sk-proj-your-key-here"
+OPENAI_MODEL="gpt-4o-mini"
 
-# App URL (for production deployments)
+# App URL
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ```
 
-**4. Database Setup**
-
-Generate and run database migrations:
+### 4. Database Setup
 
 ```bash
-npm run db:generate
-npm run db:migrate
+pnpm run db:migrate
 ```
 
-**5. Start the Development Server**
+### 5. Start Development Server
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
-Your application will be available at [http://localhost:3000](http://localhost:3000)
+Visit [http://localhost:3000](http://localhost:3000)
 
-## ⚙️ Service Configuration
+## ⚙️ Configuration Guide
 
-### PostgreSQL Database on Vercel
+### PostgreSQL Database
 
-1. Go to <a href="https://vercel.com/dashboard" target="_blank">Vercel Dashboard</a>
-2. Navigate to the **Storage** tab
-3. Click **Create** → **Postgres**
-4. Choose your database name and region
-5. Copy the `POSTGRES_URL` from the `.env.local` tab
-6. Add it to your `.env` file
+**Option 1: Neon (Cloud, Recommended)**
+1. Go to [neon.tech](https://neon.tech)
+2. Create a new project
+3. Copy the connection string to `POSTGRES_URL`
 
-### Google OAuth Credentials
+**Option 2: Vercel Postgres**
+1. Go to [Vercel Dashboard](https://vercel.com/dashboard)
+2. Storage → Create → Postgres
+3. Copy connection string
 
-1. Go to <a href="https://console.cloud.google.com/" target="_blank">Google Cloud Console</a>
-2. Create a new project or select an existing one
-3. Navigate to **Credentials** → **Create Credentials** → **OAuth 2.0 Client ID**
-4. Set application type to **Web application**
-5. Add authorized redirect URIs:
-   - `http://localhost:3000/api/auth/callback/google` (development)
-   - `https://yourdomain.com/api/auth/callback/google` (production)
-6. Copy the **Client ID** and **Client Secret** to your `.env` file
+**Option 3: Local PostgreSQL**
+```bash
+# Install PostgreSQL locally
+# Set POSTGRES_URL=postgresql://user:pass@localhost:5432/brandfinder
+```
 
-### OpenRouter API Key
+### Google OAuth
 
-1. Go to <a href="https://openrouter.ai/" target="_blank">OpenRouter</a>
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create project → Credentials → OAuth 2.0 Client ID
+3. Add redirect URI: `http://localhost:3000/api/auth/callback/google`
+4. Copy Client ID and Secret to `.env`
+
+### OpenAI API Key (Required)
+
+1. Go to [OpenAI Platform](https://platform.openai.com/api-keys)
 2. Sign up or log in to your account
-3. Navigate to **Settings** → **Keys** or visit <a href="https://openrouter.ai/settings/keys" target="_blank">Keys Settings</a>
-4. Click **Create Key** and give it a name
-5. Copy the API key and add it to your `.env` file as `OPENROUTER_API_KEY`
-6. Browse available models at <a href="https://openrouter.ai/models" target="_blank">OpenRouter Models</a>
+3. Click "Create new secret key"
+4. Copy the key and add to `.env` as `OPENAI_API_KEY`
+
+**Recommended Models:**
+- `gpt-4o-mini` - Fast and cost-effective (default)
+- `gpt-4o` - More accurate, higher cost
+- `gpt-4-turbo` - Balanced performance and cost
 
 ## 🗂️ Project Structure
 
 ```
 src/
-├── app/                    # Next.js app directory
-│   ├── api/               # API routes
-│   │   ├── auth/          # Authentication endpoints
-│   │   └── chat/          # AI chat endpoint
-│   ├── chat/              # AI chat page
-│   ├── dashboard/         # User dashboard
-│   └── page.tsx           # Home page
-├── components/            # React components
-│   ├── auth/             # Authentication components
-│   └── ui/               # shadcn/ui components
-└── lib/                  # Utilities and configurations
-    ├── auth.ts           # Better Auth configuration
-    ├── auth-client.ts    # Client-side auth utilities
-    ├── db.ts             # Database connection
-    ├── schema.ts         # Database schema
-    └── utils.ts          # General utilities
+├── app/
+│   ├── api/
+│   │   ├── auth/[...all]/     # Better Auth endpoint
+│   │   ├── traders/           # Trader CRUD operations
+│   │   │   └── [id]/scan/     # AI brand scanning
+│   │   └── brands/            # Brand catalog endpoint
+│   ├── traders/page.tsx       # Trader management UI
+│   ├── brands/page.tsx        # Brand catalog UI
+│   └── page.tsx               # Landing page
+├── components/
+│   ├── auth/                  # Auth components
+│   ├── ui/                    # shadcn/ui components
+│   └── site-header.tsx        # Navigation
+└── lib/
+    ├── auth.ts                # Better Auth config
+    ├── db.ts                  # Database connection
+    └── schema.ts              # Database schema
 ```
 
 ## 🔧 Available Scripts
 
 ```bash
-npm run dev          # Start development server with Turbopack
-npm run build        # Build for production
-npm run start        # Start production server
-npm run lint         # Run ESLint
-npm run db:generate  # Generate database migrations
-npm run db:migrate   # Run database migrations
-npm run db:push      # Push schema changes to database
-npm run db:studio    # Open Drizzle Studio (database GUI)
-npm run db:dev       # Push schema for development
-npm run db:reset     # Reset database (drop all tables)
+pnpm run dev          # Start dev server
+pnpm run build        # Production build
+pnpm run start        # Start production server
+pnpm run lint         # ESLint
+pnpm run typecheck    # TypeScript checking
+pnpm run db:generate  # Generate migrations
+pnpm run db:migrate   # Run migrations
+pnpm run db:studio    # Database GUI
+pnpm run db:reset     # Reset database
 ```
 
-## 📖 Pages Overview
+## 📖 How to Use
 
-- **Home (`/`)**: Landing page with setup instructions and features overview
-- **Dashboard (`/dashboard`)**: Protected user dashboard with profile information
-- **Chat (`/chat`)**: AI-powered chat interface using OpenRouter (requires authentication)
+### Adding a Trader
+
+1. Sign in with Google
+2. Navigate to "Traders" page
+3. Click "Add Trader"
+4. Enter trader name and URL
+5. Click "Add Trader"
+
+### Scanning for Brands
+
+1. On the Traders page, find your trader
+2. Click "Start Scan" (or "Rescan" for existing traders)
+3. Wait for AI to analyze the website (10-60 seconds)
+4. View discovered brands in the Brands catalog
+
+### Viewing Brand Catalog
+
+1. Navigate to "Brands" page
+2. See all unique brands across all traders
+3. Each brand shows how many traders carry it
+4. View statistics at the bottom
+
+## 🧪 Example Traders to Try
+
+Test the application with these electronics traders:
+
+- [Boolchand](https://boolchand.com/)
+- [Electronics Mexico](https://www.electronicsmexico.com/)
+- [Atacado Connect](https://atacadoconnect.com/)
+- [B2B Mayoristas](https://www.b2bmayoristas.com/)
 
 ## 🚀 Deployment
 
-### Deploy to Vercel (Recommended)
+### Deploy to Vercel
 
-1. Install the Vercel CLI globally:
+1. Push code to GitHub
+2. Import project in [Vercel](https://vercel.com)
+3. Add environment variables
+4. Deploy
 
-   ```bash
-   npm install -g vercel
-   ```
+### Environment Variables for Production
 
-2. Deploy your application:
+Set these in Vercel dashboard:
 
-   ```bash
-   vercel --prod
-   ```
+- `POSTGRES_URL`
+- `BETTER_AUTH_SECRET`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `OPENAI_API_KEY`
+- `NEXT_PUBLIC_APP_URL` (your production domain)
 
-3. Follow the prompts to configure your deployment
-4. Add your environment variables when prompted or via the Vercel dashboard
+## 📚 Documentation
 
-### Production Environment Variables
+- [Feature Documentation](docs/features/brand-finder.md) - Detailed feature guide
+- [Database Schema](src/lib/schema.ts) - Database structure
+- [API Routes](src/app/api/) - API endpoint documentation
 
-Ensure these are set in your production environment:
+## 🔍 How It Works
 
-- `POSTGRES_URL` - Production PostgreSQL connection string
-- `BETTER_AUTH_SECRET` - Secure random 32+ character string
-- `GOOGLE_CLIENT_ID` - Google OAuth Client ID
-- `GOOGLE_CLIENT_SECRET` - Google OAuth Client Secret
-- `OPENROUTER_API_KEY` - OpenRouter API key (optional, for AI chat functionality)
-- `OPENROUTER_MODEL` - Model name from OpenRouter (optional, defaults to openai/gpt-5-mini)
-- `NEXT_PUBLIC_APP_URL` - Your production domain
+### AI Brand Extraction Process
 
-## 🎥 Tutorial Video
+1. **Fetch Website** - Download HTML content from trader URL
+2. **Send to AI** - Send first 50KB of HTML to OpenAI
+3. **Extract Brands** - AI identifies electronics brand names
+4. **Deduplicate** - Normalize and deduplicate brand names
+5. **Store** - Save brands and relationships in database
+6. **Update Counts** - Update trader counts for each brand
 
-Watch my comprehensive tutorial on how to use this agentic coding boilerplate to build AI-powered applications:
+### Technology Stack
 
-<a href="https://youtu.be/T0zFZsr_d0Q" target="_blank" rel="noopener noreferrer">📺 YouTube Tutorial - Building with Agentic Coding Boilerplate</a>
+- **Frontend**: Next.js 15, React 19, TypeScript
+- **Styling**: Tailwind CSS 4, shadcn/ui
+- **Database**: PostgreSQL + Drizzle ORM
+- **Auth**: Better Auth (Google OAuth)
+- **AI**: OpenAI (GPT-4o, GPT-4o-mini, etc.)
+- **Deployment**: Vercel-ready
+
+## 🛠️ Troubleshooting
+
+### "No brands found" error
+
+- Website may not list brands clearly
+- Try a different AI model (gpt-4o instead of gpt-4o-mini)
+- Check OPENAI_API_KEY is set correctly
+
+### Scan timeout
+
+- Website is too slow
+- Try again or use a different trader
+- Consider implementing background jobs
+
+### Database errors
+
+- Verify POSTGRES_URL is correct
+- Run migrations: `pnpm run db:migrate`
+- Check database is accessible
 
 ## 🤝 Contributing
 
-1. Fork this repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Contributions welcome! Please:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - see LICENSE file for details
 
-## 🆘 Need Help?
+## 🆘 Support
 
-If you encounter any issues:
-
-1. Check the [Issues](https://github.com/leonvanzyl/agentic-coding-starter-kit/issues) section
-2. Review the documentation above
-3. Create a new issue with detailed information about your problem
+- [Create an Issue](https://github.com/yourusername/brand-finder/issues)
+- Check [Feature Documentation](docs/features/brand-finder.md)
+- Review existing issues for solutions
 
 ---
 
-**Happy coding! 🚀**
+**Built with ❤️ using Next.js and AI**
