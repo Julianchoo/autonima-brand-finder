@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { UserProfile } from "@/components/auth/user-profile";
 import { ModeToggle } from "./ui/mode-toggle";
-import { Search, Package, TrendingUp } from "lucide-react";
+import { Search, Package, TrendingUp, Link2 } from "lucide-react";
 import { Button } from "./ui/button";
 
 export function SiteHeader() {
@@ -33,6 +33,12 @@ export function SiteHeader() {
                 <Link href="/brands">
                   <Package className="mr-2 h-4 w-4" />
                   Brands
+                </Link>
+              </Button>
+              <Button variant="ghost" asChild>
+                <Link href="/bulk-scan">
+                  <Link2 className="mr-2 h-4 w-4" />
+                  Bulk Scan
                 </Link>
               </Button>
             </nav>

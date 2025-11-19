@@ -4,6 +4,7 @@ import { trader, brand, traderBrand } from "@/lib/schema";
 import { eq, and, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
+import { crawlWebsite } from "@/lib/crawler";
 
 export const maxDuration = 300; // 5 minutes for web scraping
 
@@ -46,7 +47,18 @@ export async function POST(
     try {
       // Note: In a production app, this should be done in a background job
       // For now, we'll do it synchronously with a timeout
-      const brands = await extractBrandsFromWebsite(traderRecord.url);
+
+      // Use smart crawler to scan multiple pages
+      const crawlResult = await crawlWebsite(traderRecord.url, {
+        maxPages: 10,      // Scan up to 10 pages
+        maxDepth: 2,       // Go up to 2 levels deep
+        delayMs: 1000,     // 1 second delay between requests
+        timeout: 10000,    // 10 second timeout per page
+      });
+
+      const brands = crawlResult.brands;
+
+      console.log(`Crawl summary: ${crawlResult.totalPages} pages scanned, ${brands.length} unique brands found`);
 
       if (brands.length === 0) {
         await db
@@ -54,13 +66,14 @@ export async function POST(
           .set({
             status: "completed",
             lastScannedAt: new Date(),
-            errorMessage: "No brands found on this website",
+            errorMessage: `No brands found after scanning ${crawlResult.totalPages} pages`,
           })
           .where(eq(trader.id, id));
 
         return NextResponse.json({
           success: true,
           brands: [],
+          pagesScanned: crawlResult.totalPages,
           message: "No brands found",
         });
       }
@@ -129,6 +142,8 @@ export async function POST(
         success: true,
         brands,
         count: brands.length,
+        pagesScanned: crawlResult.totalPages,
+        crawlDetails: crawlResult.pagesScanned,
       });
     } catch (scanError) {
       console.error("Error scanning website:", scanError);
@@ -163,128 +178,3 @@ export async function POST(
   }
 }
 
-async function extractBrandsFromWebsite(url: string): Promise<string[]> {
-  console.log("Scanning homepage:", url);
-  const brands = await extractBrandsFromPage(url);
-  console.log(`Found ${brands.length} brands`);
-  return brands;
-}
-
-async function extractBrandsFromPage(url: string): Promise<string[]> {
-  const response = await fetch(url, {
-    headers: {
-      "User-Agent":
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
-  }
-
-  const html = await response.text();
-
-  // Extract text content from HTML, including alt attributes and meta tags
-  const cleanedText = extractTextFromHTML(html);
-
-  // Use OpenAI to extract brand names from the text
-  if (!process.env.OPENAI_API_KEY) {
-    throw new Error(
-      "OPENAI_API_KEY is not configured. Please add it to your .env file."
-    );
-  }
-
-  const openAIResponse = await fetch(
-    "https://api.openai.com/v1/chat/completions",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || "gpt-4o-mini",
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a brand extraction specialist for electronics traders. Your job is to analyze website content and extract ALL electronics brand names mentioned anywhere on the page. Look for: camera brands (Canon, Nikon, Sony, Fujifilm, Panasonic, Olympus, Leica), phone brands (Samsung, Apple, iPhone, Xiaomi, OnePlus, Google, Motorola, Nokia, Huawei), computer brands (Dell, HP, Lenovo, Asus, Acer, MSI, Apple, MacBook), TV brands (LG, Samsung, Sony, TCL, Hisense, Vizio), audio brands (Bose, JBL, Sennheiser, Audio-Technica, Sony, Beats), storage brands (SanDisk, Kingston, Samsung, Western Digital, Seagate, Crucial), smartwatch brands (Apple Watch, Garmin, Fitbit, Samsung Galaxy Watch), accessory brands (Otterbox, Spigen, Anker), camera accessory brands (GoPro, DJI, Manfrotto), and ANY other electronics brands you can find. Be thorough and include all brands, even if mentioned only once. Return ONLY a JSON array of brand names, nothing else.",
-          },
-          {
-            role: "user",
-            content: `Extract ALL electronics brand names from this website content. Be very thorough - include every brand you can find in product names, descriptions, links, navigation menus, footers, and anywhere else. Return only a JSON array of unique brand names in proper capitalization, for example: ["Canon", "Nikon", "Sony", "SanDisk", "Apple", "Samsung"]. If no brands are found, return an empty array [].\n\nWebsite content (first 40000 chars):\n${cleanedText.slice(0, 40000)}`,
-          },
-        ],
-        temperature: 0.1,
-        max_tokens: 4000,
-      }),
-    }
-  );
-
-  if (!openAIResponse.ok) {
-    const errorText = await openAIResponse.text();
-    throw new Error(`OpenAI API error: ${errorText}`);
-  }
-
-  const aiResult = await openAIResponse.json();
-  const content = aiResult.choices?.[0]?.message?.content || "[]";
-
-  // Parse the JSON array from the AI response
-  try {
-    // Try to extract JSON array from the response
-    const jsonMatch = content.match(/\[[\s\S]*\]/);
-    if (jsonMatch) {
-      const brands = JSON.parse(jsonMatch[0]) as string[];
-      // Remove duplicates and return
-      return [...new Set(brands.map((b) => b.trim()).filter((b) => b.length > 0))];
-    }
-    return [];
-  } catch (error) {
-    console.error("Failed to parse AI response:", content);
-    return [];
-  }
-}
-
-function extractTextFromHTML(html: string): string {
-  // Extract text from HTML tags, including alt attributes and meta content
-  let text = html;
-
-  // Extract alt attributes from images
-  const altMatches = html.matchAll(/alt=["']([^"']+)["']/gi);
-  for (const match of altMatches) {
-    text += ` ${match[1]}`;
-  }
-
-  // Extract title attributes
-  const titleMatches = html.matchAll(/title=["']([^"']+)["']/gi);
-  for (const match of titleMatches) {
-    text += ` ${match[1]}`;
-  }
-
-  // Extract meta content
-  const metaMatches = html.matchAll(/content=["']([^"']+)["']/gi);
-  for (const match of metaMatches) {
-    text += ` ${match[1]}`;
-  }
-
-  // Remove script and style tags
-  text = text.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, " ");
-  text = text.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, " ");
-
-  // Remove HTML tags
-  text = text.replace(/<[^>]+>/g, " ");
-
-  // Decode HTML entities
-  text = text
-    .replace(/&nbsp;/g, " ")
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'");
-
-  // Remove extra whitespace
-  text = text.replace(/\s+/g, " ").trim();
-
-  return text;
-}
