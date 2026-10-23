@@ -1,9 +1,12 @@
 {
   "name": "agentic-coding-starter-kit",
   "version": "1.1.2",
+  "engines": {
+    "node": "24.x"
+  },
   "scripts": {
     "dev": "next dev",
-    "build": "pnpm run db:migrate && next build",
+    "build": "node --version && pnpm run db:migrate && next build",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
